@@ -1,0 +1,53 @@
+"""API service for serving model inference."""
+
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load("@pip//:requirements.bzl", "requirement")
+
+py_library(
+    name = "triage_api_lib",
+    srcs = ["src/triage.py"],
+    deps = [
+        "//packages/nlp_utils:nlp_utils",
+        requirement("rich"),
+    ],
+)
+
+py_binary(
+    name = "triage_api",
+    srcs = ["src/triage.py"],
+    main = "src/triage.py",
+    deps = [
+        ":triage_api_lib",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# FastAPI service (to be implemented)
+py_library(
+    name = "fastapi_server_lib",
+    srcs = ["src/api_server.py"],
+    deps = [
+        "//packages/nlp_utils:nlp_utils",
+        requirement("fastapi"),
+        requirement("uvicorn"),
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
+    name = "fastapi_server",
+    srcs = ["src/api_server.py"],
+    main = "src/api_server.py",
+    deps = [
+        ":fastapi_server_lib",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Container targets (commented out for demo - would work with proper oci rules)
+# oci_image(
+#     name = "api_service_image", 
+#     base = "@distroless_python",
+#     entrypoint = ["/fastapi_server"],
+#     visibility = ["//visibility:public"],
+# )

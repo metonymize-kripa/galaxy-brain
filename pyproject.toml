@@ -1,32 +1,142 @@
 [project]
-name = "pydantic-spacy-hf-starter"
+name = "galaxy-brain"
 version = "0.1.0"
-description = "A starter project combining Pydantic, spaCy, and Hugging Face transformers"
+description = "🌌 Galaxy Brain - A unified, hermetic NLP development and deployment system"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
+authors = [
+    {name = "Galaxy Brain Contributors"},
+]
+license = {text = "MIT"}
+keywords = ["nlp", "bazel", "spacy", "huggingface", "pydantic", "ai", "deployment"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Build Tools",
+]
 dependencies = [
     "pydantic-ai[examples]>=0.4.0",
     "spacy[transformers]>=3.8.0",
-    "transformers>=4.30.0,<4.50.0",
+    "transformers>=4.30.0,<4.50.0", 
     "torch>=2.0.0",
     "rich>=13.0.0",
     "pydantic>=2.8.0",
     "numpy>=1.19.0",
-    "pip>=25.1.1",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "scikit-learn>=1.5.0",
+    "huggingface-hub>=0.26.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "black>=24.0.0", 
+    "ruff>=0.8.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
+]
+ml = [
+    "datasets>=3.0.0",
+    "evaluate>=0.4.0",
+    "wandb>=0.17.0",
+    "tensorboard>=2.17.0",
+]
+deploy = [
+    "docker>=7.0.0",
+    "kubernetes>=30.0.0",
+]
+
+[project.scripts]
+galaxy-brain = "main:main"
+triage = "apps.api_service.src.triage:main"
+batch-process = "apps.batch_processor.src.processor:main"
 
 [tool.uv]
 dev-dependencies = [
-    "pytest>=7.0.0",
-    "black>=22.0.0",
-    "ruff>=0.1.0",
+    "pytest>=8.0.0",
+    "black>=24.0.0", 
+    "ruff>=0.8.0",
+    "mypy>=1.0.0",
+    "pre-commit>=3.0.0",
 ]
 index-strategy = "unsafe-first-match"
 
 [tool.black]
-line-length = 88
-target-version = ['py38']
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
 
 [tool.ruff]
-line-length = 88
-target-version = "py38"
+line-length = 100
+target-version = "py311"
+select = ["E", "F", "W", "I", "N", "UP", "S", "B", "A", "C4", "ICN", "PIE", "T20", "SIM", "ERA"]
+ignore = ["E501", "S101", "S603", "S607"]
+unfixable = ["B"]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**/*" = ["S101", "S106", "S108"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+show_error_codes = true
+namespace_packages = true
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = [
+    "spacy.*",
+    "transformers.*", 
+    "torch.*",
+    "sklearn.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--tb=short",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["packages", "apps", "ml_pipelines", "tools"]

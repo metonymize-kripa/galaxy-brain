@@ -1,0 +1,36 @@
+"""Root BUILD file for Galaxy Brain monorepo."""
+
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+# Root library - exposes main functionality
+py_library(
+    name = "galaxy_brain",
+    srcs = ["main.py"],
+    visibility = ["//visibility:public"],
+)
+
+# Legacy entry point for backwards compatibility
+py_binary(
+    name = "main",
+    srcs = ["main.py"],
+    main = "main.py",
+    visibility = ["//visibility:public"],
+)
+
+# Export all subdirectories for easy access
+exports_files([
+    "pyproject.toml",
+    "requirements_lock.txt",
+    "MODULE.bazel",
+])
+
+# Filegroup for common configuration files
+filegroup(
+    name = "config_files",
+    srcs = [
+        "pyproject.toml",
+        "requirements_lock.txt",
+        "MODULE.bazel",
+    ],
+    visibility = ["//visibility:public"],
+)

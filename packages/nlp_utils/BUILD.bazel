@@ -1,0 +1,47 @@
+"""NLP utilities and shared components."""
+
+load("@rules_python//python:defs.bzl", "py_library")
+load("@pip//:requirements.bzl", "requirement")
+
+py_library(
+    name = "models",
+    srcs = ["src/models.py"],
+    deps = [
+        requirement("pydantic"),
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "extractors",
+    srcs = ["src/extractors.py"],
+    deps = [
+        ":models",
+        requirement("spacy"),
+        requirement("transformers"),
+        requirement("torch"),
+        requirement("numpy"),
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "agent",
+    srcs = ["src/agent.py"],
+    deps = [
+        ":models",
+        ":extractors",
+        requirement("pydantic-ai"),
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "nlp_utils",
+    deps = [
+        ":models",
+        ":extractors", 
+        ":agent",
+    ],
+    visibility = ["//visibility:public"],
+)

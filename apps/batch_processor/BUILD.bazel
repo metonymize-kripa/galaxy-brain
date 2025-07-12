@@ -1,0 +1,43 @@
+"""Batch processor for large-scale text processing."""
+
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load("@pip//:requirements.bzl", "requirement")
+
+py_library(
+    name = "batch_processor_lib",
+    srcs = ["src/processor.py"],
+    deps = [
+        "//packages/nlp_utils:nlp_utils",
+        requirement("rich"),
+    ],
+)
+
+py_binary(
+    name = "batch_processor",
+    srcs = ["src/processor.py"],
+    main = "src/processor.py",
+    deps = [
+        ":batch_processor_lib",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Demo binary (legacy test_demo.py)
+py_binary(
+    name = "demo",
+    srcs = ["src/test_demo.py"],
+    main = "src/test_demo.py",
+    deps = [
+        "//packages/nlp_utils:nlp_utils",
+        requirement("rich"),
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Container targets (commented out for demo - would work with proper oci rules)
+# oci_image(
+#     name = "batch_processor_image",
+#     base = "@distroless_python", 
+#     entrypoint = ["/batch_processor"],
+#     visibility = ["//visibility:public"],
+# )

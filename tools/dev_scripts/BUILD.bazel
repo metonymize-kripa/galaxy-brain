@@ -1,0 +1,27 @@
+"""Development tools and scripts."""
+
+load("@rules_python//python:defs.bzl", "py_binary")
+
+# Configuration setup script
+py_binary(
+    name = "setup_config",
+    srcs = ["set_keys_config.sh"],
+    visibility = ["//visibility:public"],
+)
+
+# Development environment setup
+py_binary(
+    name = "dev_setup",
+    srcs = ["dev_setup.py"],
+    visibility = ["//visibility:public"],
+)
+
+# Model download script
+py_binary(
+    name = "download_models",
+    srcs = ["download_models.py"],
+    deps = [
+        "//packages/nlp_utils:nlp_utils",
+    ],
+    visibility = ["//visibility:public"],
+)

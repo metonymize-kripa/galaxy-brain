@@ -1,0 +1,67 @@
+"""ML pipelines for training and evaluation."""
+
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load("@pip//:requirements.bzl", "requirement")
+
+# Training pipeline for NER model
+py_library(
+    name = "train_ner_lib",
+    srcs = ["train_ner_model/training_script.py"],
+    deps = [
+        "//packages/nlp_utils:nlp_utils",
+        requirement("spacy"),
+        requirement("transformers"),
+    ],
+)
+
+py_binary(
+    name = "train_ner_model",
+    srcs = ["train_ner_model/training_script.py"],
+    main = "train_ner_model/training_script.py",
+    deps = [":train_ner_lib"],
+    data = [
+        "//ml_pipelines:training_data",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Evaluation pipeline for sentiment model
+py_library(
+    name = "eval_sentiment_lib", 
+    srcs = ["eval_sentiment_model/eval_script.py"],
+    deps = [
+        "//packages/nlp_utils:nlp_utils",
+        requirement("transformers"),
+        requirement("torch"),
+    ],
+)
+
+py_binary(
+    name = "eval_sentiment_model",
+    srcs = ["eval_sentiment_model/eval_script.py"],
+    main = "eval_sentiment_model/eval_script.py",
+    deps = [":eval_sentiment_lib"],
+    data = [
+        "//ml_pipelines:test_data",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Training data filegroup
+filegroup(
+    name = "training_data",
+    srcs = [
+        "sample_emails.txt",
+        "complex_email.txt",
+        "single_email.txt",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "test_data",
+    srcs = [
+        "sample_emails.txt",
+    ],
+    visibility = ["//visibility:public"],
+)

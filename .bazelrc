@@ -1,0 +1,47 @@
+# Galaxy Brain Bazel configuration
+
+# Build settings
+build --enable_bzlmod
+build --incompatible_strict_action_env
+build --sandbox_default_allow_network=false
+
+# Python settings - use modern toolchain approach
+build --incompatible_use_python_toolchains=true
+
+# Performance settings 
+build --local_resources=cpu=HOST_CPUS*0.75
+build --local_resources=memory=HOST_RAM*0.75
+build --jobs=auto
+
+# Output settings
+build --color=yes
+build --curses=yes
+build --progress_report_interval=10
+
+# Test settings
+test --test_output=errors
+test --test_summary=detailed
+
+# Platform settings
+build:linux --platforms=@rules_python//python/platforms:linux_x86_64
+build:macos --platforms=@rules_python//python/platforms:mac_x86_64
+build:macos_arm64 --platforms=@rules_python//python/platforms:mac_aarch64
+
+# CI settings
+build:ci --verbose_failures
+build:ci --show_progress_rate_limit=5
+build:ci --curses=no
+build:ci --color=no
+
+# Development settings
+build:dev --compilation_mode=dbg
+build:dev --test_output=all
+
+# Production settings  
+build:prod --compilation_mode=opt
+build:prod --strip=always
+
+# GPU settings (for accelerated hardware like Cerebras)
+build:gpu --define=with_cuda=true
+
+try-import %workspace%/.bazelrc.local

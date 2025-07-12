@@ -1,0 +1,48 @@
+"""Galaxy Brain 🌌 - A unified, hermetic NLP development and deployment system."""
+
+module(
+    name = "galaxy_brain",
+    version = "0.1.0",
+    compatibility_level = 1,
+)
+
+# Bazel rules for Python
+bazel_dep(name = "rules_python", version = "0.31.0")
+
+# Bazel rules for containers
+bazel_dep(name = "rules_oci", version = "1.7.4")
+
+# Bazel rules for pkg (for creating packages)
+bazel_dep(name = "rules_pkg", version = "0.10.1")
+
+# Python interpreter configuration
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    python_version = "3.11",
+)
+use_repo(python, "python_3_11")
+
+# Python dependencies
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "pip",
+    python_version = "3.11",
+    requirements_lock = "//:requirements_lock.txt",
+)
+use_repo(pip, "pip")
+
+# Container base images
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "distroless_python",
+    digest = "sha256:a9306830fb7824e71f02835b97bbf8b293a1e7c1b75a90ae1fb8dd2b37e769b5",
+    image = "gcr.io/distroless/python3-debian12",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64",
+    ],
+)
+use_repo(oci, "distroless_python")
+
+# Hugging Face models and datasets as external dependencies
+# This will be implemented as a Bazel extension in the future

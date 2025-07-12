@@ -1,0 +1,5 @@
+"""Bazel rules and extensions for Galaxy Brain."""
+
+exports_files([
+    "hf_repository.bzl",
+])
