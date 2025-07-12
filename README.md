@@ -25,20 +25,7 @@ uv sync
 uv run python -m spacy download en_core_web_trf
 ```
 
-**Using pip (Alternative)**
-```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Download spaCy model
-python -m spacy download en_core_web_trf
-```
-
-### 2. Run the Demo
+### Run the Demo
 
 **Using UV**
 ```bash
@@ -51,19 +38,6 @@ uv run python triage.py sample_emails.txt
 # Or pipe email text
 echo "I'm having trouble with Widget-X login" | uv run python triage.py
 ```
-
-**Using pip**
-```bash
-# Run the demo (no API keys required)
-python test_demo.py
-
-# Or process a specific email
-python triage.py sample_emails.txt
-
-# Or pipe email text
-echo "I'm having trouble with Widget-X login" | python triage.py
-```
-
 ## 🏗️ Architecture
 
 ```
@@ -110,19 +84,6 @@ uv run python triage.py email.txt --json
 # Use different model
 uv run python triage.py email.txt --model gpt-4
 ```
-
-**Using pip**
-```bash
-# Process single email
-python triage.py email.txt
-
-# Output as JSON
-python triage.py email.txt --json
-
-# Use different model
-python triage.py email.txt --model gpt-4
-```
-
 ### Programmatic Usage
 
 ```python
